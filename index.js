@@ -16,7 +16,9 @@ app.get('/sendtx',function(req,res){
         var toAddress = process.env.OTHER_ADDRESS;
 
         //contract abi is the array that you can get from the ethereum wallet or etherscan
-        var contractABI =process.env.YOUR_CONTRACT_ABI;
+        //var contractABI =process.env.YOUR_CONTRACT_ABI;
+        var contractABI = JSON.parse(fs.readFileSync('advAbi.json'));
+
         var contractAddress =process.env.YOUR_CONTRACT_ADDRESS;
         //creating contract object
         var contract = new web3js.eth.Contract(contractABI,contractAddress);
