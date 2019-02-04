@@ -38,6 +38,7 @@ app.get('/sendtx',function(req,res){
             "gasLimit": web3js.utils.toHex(210000), 
             "to": contractAddress,  
             "data": contract.methods.transfer(toAddress, amount).encodeABI(), 
+            //"data": contract.methods.mintToken(toAddress, amount).encodeABI(), 
             "nonce": web3js.utils.toHex(count) 
             }
             //console.log(rawTransaction);
