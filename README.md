@@ -1,5 +1,7 @@
 # ethereum-nodejs
 
+[![HitCount](http://hits.dwyl.io/riki95/ethereum-nodejs.svg)](http://hits.dwyl.io/riki95/ethereum-nodejs)
+
 genovesino.sol is the Smart Contract written in Solidity
 
 index.js runs a nodejs server that interact with the smart contract
