@@ -1,4 +1,5 @@
 require('dotenv').config();
+var fs = require('fs');
 
 const web3 = require('web3');
 const express = require('express');
@@ -28,10 +29,18 @@ app.get('/sendtx',function(req,res){
         web3js.eth.getTransactionCount(myAddress).then(function(v){
             console.log("Count: "+v);
             count = v;
-            var amount = web3js.utils.toHex(1e16);
+            var amount = web3js.utils.toHex(5 * 1e18);
+
             //creating raw tranaction
-            var rawTransaction = {"from":myAddress, "gasPrice":web3js.utils.toHex(20* 1e9),"gasLimit":web3js.utils.toHex(210000),"to":contractAddress,"value":"0x0","data":contract.methods.transfer(toAddress, amount).encodeABI(),"nonce":web3js.utils.toHex(count)}
-            console.log(rawTransaction);
+            var rawTransaction = { 
+            "from": myAddress, 
+            "gasPrice": web3js.utils.toHex(20 * 1e9), 
+            "gasLimit": web3js.utils.toHex(210000), 
+            "to": contractAddress,  
+            "data": contract.methods.transfer(toAddress, amount).encodeABI(), 
+            "nonce": web3js.utils.toHex(count) 
+            }
+            //console.log(rawTransaction);
             //creating tranaction via ethereumjs-tx
             var transaction = new Tx(rawTransaction);
             //signing transaction with private key
