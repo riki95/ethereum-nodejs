@@ -18,7 +18,7 @@ app.get('/sendtx',function(req,res){
 
         //contract abi is the array that you can get from the ethereum wallet or etherscan
         //var contractABI =process.env.YOUR_CONTRACT_ABI;
-        var contractABI = JSON.parse(fs.readFileSync('advAbi.json'));
+        var contractABI = JSON.parse(fs.readFileSync('abi.json'));
 
         var contractAddress =process.env.YOUR_CONTRACT_ADDRESS;
         //creating contract object
@@ -29,7 +29,7 @@ app.get('/sendtx',function(req,res){
         web3js.eth.getTransactionCount(myAddress).then(function(v){
             console.log("Count: "+v);
             count = v;
-            var amount = web3js.utils.toHex(5 * 1e18);
+            var amount = web3js.utils.toHex(1);
 
             //creating raw tranaction
             var rawTransaction = { 
@@ -48,7 +48,7 @@ app.get('/sendtx',function(req,res){
             //sending transacton via web3js module
             web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
             .on('transactionHash',console.log);
-                
+            
             contract.methods.balanceOf(myAddress).call()
             .then(function(balance){console.log(balance)});
         })
