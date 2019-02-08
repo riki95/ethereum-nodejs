@@ -1,4 +1,4 @@
-pragma solidity ^0.5.1;
+pragma solidity ^0.5.0;
 
 contract owned {
     address public owner;
@@ -8,11 +8,11 @@ contract owned {
     }
 
     modifier onlyOwner {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Error OnlyOwner");
         _;
     }
 
-    function transferOwnership(address newOwner) onlyOwner public {
+    function transferOwnership(address newOwner) public onlyOwner {
         owner = newOwner;
     }
 }
@@ -33,13 +33,14 @@ contract Genovesino is owned {
     }
 
     function transfer(address _to, uint256 _value) public {       /* Check if sender has balance and for overflows */
-        require(balanceOf[msg.sender] >= _value && balanceOf[_to] + _value >= balanceOf[_to]);       /* Add and subtract new balances */
+          /* Add and subtract new balances */
+        require(balanceOf[msg.sender] >= _value && balanceOf[_to] + _value >= balanceOf[_to], "Error Transfer"); 
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;       /* Notify anyone listening that this transfer took place */
         emit Transfer(msg.sender, _to, _value);
     }
 
-    function mintToken(address target, uint256 mintedAmount) onlyOwner public {
+    function mintToken(address target, uint256 mintedAmount) public onlyOwner {
         balanceOf[target] += mintedAmount;
         totalSupply += mintedAmount;
         emit Transfer(owner, owner, mintedAmount);
