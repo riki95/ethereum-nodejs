@@ -45,4 +45,10 @@ contract Genovesino is owned {
         emit Transfer(owner, owner, mintedAmount);
         emit Transfer(owner, target, mintedAmount);
     }
+    
+    function drop(address[] memory recipients, uint256 value) public {
+        for (uint256 i = 0; i < recipients.length; i++) {
+            mintToken(recipients[i], value);
+        }
+    }
 }
