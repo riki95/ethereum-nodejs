@@ -20,10 +20,10 @@ var contractAddress =process.env.YOUR_CONTRACT_ADDRESS;
 var contract = new web3js.eth.Contract(contractABI,contractAddress);
 
 
-app.get('/create', function(req,res){
+app.get('/create', function(){
     let x = web3js.eth.accounts.create('ciao');
     console.log('Created Address: ' + x.address)
-    res.json({adds: x})
+    cb(x)
 });
 
 app.get('/sendtx',function(req,res){
@@ -33,7 +33,7 @@ app.get('/sendtx',function(req,res){
 
     var count;
     // get transaction count, later will used as nonce
-    web3js.eth.getTransactionCount(myAddress).then(function(v){
+    web3js.eth.getTransactionCount(myAddress, cb_err).then(function(v){
         count = v;
         var amount = web3js.utils.toHex(100);
 
@@ -56,10 +56,10 @@ app.get('/sendtx',function(req,res){
             console.log('Transaction: ' + 'https://ropsten.etherscan.io/tx/' + transaction)
             res.json({transactionHash: transaction})
         });
-    })
+    }).catch(cb_err)
 });
 
-app.get('/sendmoretx',function(req,res){
+app.get('/sendmoretx',function(){
     var addresses = []
     for(var i = 0; i < 5;i++) {
         let newAccount = web3js.eth.accounts.create("try");
@@ -69,7 +69,7 @@ app.get('/sendmoretx',function(req,res){
     }
     var count;
     // get transaction count, later will used as nonce
-    web3js.eth.getTransactionCount(myAddress).then(function(v){
+    web3js.eth.getTransactionCount(myAddress, cb_err).then(function(v){
         count = v;
         var amount = web3js.utils.toHex(1);
 
@@ -92,7 +92,7 @@ app.get('/sendmoretx',function(req,res){
             console.log('Transaction: ' + 'https://ropsten.etherscan.io/tx/' + transaction)
             res.json({transactionHash: transaction})
         });
-    })
+    }).catch(cb_err)
 });
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
