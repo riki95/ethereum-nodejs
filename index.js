@@ -20,23 +20,21 @@ var contractAddress =process.env.YOUR_CONTRACT_ADDRESS;
 var contract = new web3js.eth.Contract(contractABI,contractAddress);
 
 
-app.get('/create', function(){
+app.get('/create', () => {
     let x = web3js.eth.accounts.create('ciao');
     console.log('Created Address: ' + x.address)
-    cb(x)
-});
+})
 
-app.get('/sendtx',function(req,res){
-    let newAccount = web3js.eth.accounts.create('try');
+app.get('/sendtx',function(res){
+    let newAccount = web3js.eth.accounts.create('ciao');
     var toAddress = newAccount.address;
     console.log('ToAddress: ' + 'https://ropsten.etherscan.io/address/' + toAddress)
 
     var count;
     // get transaction count, later will used as nonce
-    web3js.eth.getTransactionCount(myAddress, cb_err).then(function(v){
+    web3js.eth.getTransactionCount(myAddress).then(function(v){
         count = v;
-        var amount = web3js.utils.toHex(100);
-
+        var amount = web3js.utils.toHex(1);
         //creating raw tranaction
         var rawTransaction = { 
             "from": myAddress, 
@@ -54,9 +52,8 @@ app.get('/sendtx',function(req,res){
         web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
         .on('transactionHash', (transaction) => {
             console.log('Transaction: ' + 'https://ropsten.etherscan.io/tx/' + transaction)
-            res.json({transactionHash: transaction})
         });
-    }).catch(cb_err)
+    })
 });
 
 app.get('/sendmoretx',function(){
@@ -69,7 +66,7 @@ app.get('/sendmoretx',function(){
     }
     var count;
     // get transaction count, later will used as nonce
-    web3js.eth.getTransactionCount(myAddress, cb_err).then(function(v){
+    web3js.eth.getTransactionCount(myAddress).then(function(v){
         count = v;
         var amount = web3js.utils.toHex(1);
 
@@ -90,9 +87,13 @@ app.get('/sendmoretx',function(){
         web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
         .on('transactionHash', (transaction) => {
             console.log('Transaction: ' + 'https://ropsten.etherscan.io/tx/' + transaction)
-            res.json({transactionHash: transaction})
         });
-    }).catch(cb_err)
+    })
 });
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(3000, () => {
+    console.log('Example app listening on port 3000!');
+    console.log('http://localhost:3000/create');
+    console.log('http://localhost:3000/sendtx');
+    console.log('http://localhost:3000/sendmoretx');
+});
