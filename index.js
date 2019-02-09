@@ -21,12 +21,12 @@ var contract = new web3js.eth.Contract(contractABI,contractAddress);
 
 
 app.get('/create', () => {
-    let x = web3js.eth.accounts.create('ciao');
+    let x = web3js.eth.accounts.create();
     console.log('Created Address: ' + x.address)
 })
 
 app.get('/sendtx',function(res){
-    let newAccount = web3js.eth.accounts.create('ciao');
+    let newAccount = web3js.eth.accounts.create();
     var toAddress = newAccount.address;
     console.log('ToAddress: ' + 'https://ropsten.etherscan.io/address/' + toAddress)
 
@@ -59,7 +59,7 @@ app.get('/sendtx',function(res){
 app.get('/sendmoretx',function(){
     var addresses = []
     for(var i = 0; i < 5;i++) {
-        let newAccount = web3js.eth.accounts.create("try");
+        let newAccount = web3js.eth.accounts.create();
         var toAddress = newAccount.address;
         console.log('ToAddress: ' + 'https://ropsten.etherscan.io/address/' + toAddress)
         addresses.push(toAddress.toString());
