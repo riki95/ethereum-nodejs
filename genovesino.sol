@@ -28,22 +28,24 @@ contract Genovesino is owned {
     /* Initializes contract with initial supply tokens to the creator of the contract */
     constructor (uint256 _initialSupply, uint8 _decimalUnits) public {
         totalSupply = _initialSupply;
-        balanceOf[msg.sender] = totalSupply;              // Give the creator all initial token
-        decimals = _decimalUnits;                            // Amount of decimals for display purposes
+        balanceOf[msg.sender] = totalSupply;    // Give the creator all initial token
+        decimals = _decimalUnits;               // Amount of decimals for display purposes
     }
 
-    function transfer(address _to, uint256 _value) public {       /* Check if sender has balance and for overflows */
-          /* Add and subtract new balances */
+    function transfer(address _to, uint256 _value) public {      
+         /* Check if sender has balance and for overflows */
         require(balanceOf[msg.sender] >= _value && balanceOf[_to] + _value >= balanceOf[_to], "Error Transfer"); 
         balanceOf[msg.sender] -= _value;
-        balanceOf[_to] += _value;       /* Notify anyone listening that this transfer took place */
-        emit Transfer(msg.sender, _to, _value);
+        balanceOf[_to] += _value;       
+
+        /* Notify anyone listening that this transfer took place */
+        emit Transfer(msg.sender, _to, _value);     
     }
 
     function mintToken(address target, uint256 mintedAmount) public onlyOwner {
         balanceOf[target] += mintedAmount;
         totalSupply += mintedAmount;
-        emit Transfer(owner, owner, mintedAmount);
+        //emit Transfer(owner, owner, mintedAmount);
         emit Transfer(owner, target, mintedAmount);
     }
 
