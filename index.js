@@ -4,7 +4,6 @@ var fs = require('fs');
 const web3 = require('web3');
 const express = require('express');
 const Tx = require('ethereumjs-tx');
-
 const app = express();
 
 //Infura HttpProvider Endpoint
@@ -13,11 +12,13 @@ web3js = new web3(new web3.providers.HttpProvider("https://ropsten.infura.io/" +
 //Default variables for web3
 var myAddress = process.env.MY_ADDRESS;
 var privateKey = Buffer.from(process.env.MY_PRIVATE_KEY, 'hex')
-
-//Creating contract object
 var contractABI = JSON.parse(fs.readFileSync('abi.json'));
 var contractAddress =process.env.YOUR_CONTRACT_ADDRESS;
 var contract = new web3js.eth.Contract(contractABI,contractAddress);
+
+var ropstenURL = 'https://ropsten.etherscan.io/';
+var ropstenAddressURL = ropstenURL + 'address/';
+var ropstenTxURL = ropstenURL + 'tx/';
 
 
 app.get('/create', () => {
@@ -28,7 +29,7 @@ app.get('/create', () => {
 app.get('/sendtx',function(res){
     let newAccount = web3js.eth.accounts.create();
     var toAddress = newAccount.address;
-    console.log('ToAddress: ' + 'https://ropsten.etherscan.io/address/' + toAddress)
+    console.log('ToAddress: ' + ropstenAddressURL + toAddress)
 
     var count;
     // get transaction count, later will used as nonce
@@ -51,20 +52,20 @@ app.get('/sendtx',function(res){
         //sending transacton via web3js module
         web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
         .on('transactionHash', (transaction) => {
-            console.log('Transaction: ' + 'https://ropsten.etherscan.io/tx/' + transaction)
+            console.log('Transaction: ' + ropstenTxURL + transaction)
         });
     })
 });
 
 app.get('/sendmoretx',function(){
     var reporter = web3js.eth.accounts.create();
-    console.log('ReporterAddress: ' + 'https://ropsten.etherscan.io/address/' + reporter.address);
+    console.log('ReporterAddress: ' + ropstenAddressURL + reporter.address);
 
     var addresses = []
     for(var i = 0; i < 5;i++) {
         let newAccount = web3js.eth.accounts.create();
         var toAddress = newAccount.address;
-        console.log('VoterAddress: ' + 'https://ropsten.etherscan.io/address/' + toAddress)
+        console.log('VoterAddress: ' + ropstenAddressURL + toAddress)
         addresses.push(toAddress.toString());
     }
     var count;
@@ -91,7 +92,7 @@ app.get('/sendmoretx',function(){
             //sending transacton via web3js module
             web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
             .on('transactionHash', (transaction) => {
-                console.log('Transaction: ' + 'https://ropsten.etherscan.io/tx/' + transaction)
+                console.log('Transaction: ' + ropstenTxURL + transaction)
             });
         });
     })
