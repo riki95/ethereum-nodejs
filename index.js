@@ -57,6 +57,7 @@ app.get('/sendtx',function(res){
 });
 
 app.get('/sendmoretx',function(){
+    var reporter = web3js.eth.accounts.create();
     var addresses = []
     for(var i = 0; i < 5;i++) {
         let newAccount = web3js.eth.accounts.create();
@@ -68,7 +69,8 @@ app.get('/sendmoretx',function(){
     // get transaction count, later will used as nonce
     web3js.eth.getTransactionCount(myAddress).then(function(v){
         count = v;
-        var amount = web3js.utils.toHex(1);
+        var amount_reporter = web3js.utils.toHex(1);
+        var amount_voters = web3js.utils.toHex(1);
 
         //creating raw tranaction
         var rawTransaction = { 
@@ -76,7 +78,7 @@ app.get('/sendmoretx',function(){
             "gasPrice": web3js.utils.toHex(20 * 1e9), 
             "gasLimit": web3js.utils.toHex(210000), 
             "to": contractAddress,
-            "data": contract.methods.drop(addresses, amount).encodeABI(), 
+            "data": contract.methods.drop(reporter.address, addresses, amount_reporter, amount_voters).encodeABI(), 
             "nonce": web3js.utils.toHex(count) 
         }
         var transaction = new Tx(rawTransaction);
