@@ -40,11 +40,11 @@ app.get('/gasPrice', () => {
     });
 })
 
-function createRawTransaction(transactionCount){
+function createRawTransaction(transactionCount, gasLimit, gasResult){
     return  {
         "from": myAddress, 
-        "gasPrice": web3js.utils.toHex(20 * 1e9), 
-        "gasLimit": web3js.utils.toHex(8000000), 
+        "gasPrice": web3js.utils.toHex(gasResult), 
+        "gasLimit": web3js.utils.toHex(gasLimit), 
         "to": contractAddress,
         "nonce": web3js.utils.toHex(transactionCount) 
     }
@@ -56,22 +56,29 @@ app.get('/sendtx', () => {
     console.log('ToAddress: ' + ropstenAddressURL + toAddress);
 
     web3js.eth.getTransactionCount(myAddress).then(function(transactionCount){
-        //amount of TOKENS to send
-        var amount = web3js.utils.toHex(1);
+        web3js.eth.getBlock("latest", (error, blockResult) => {
+            web3js.eth.getGasPrice((err, gasResult) => {
+            const gasPrice = gasResult * 1.40 
+            //amount of TOKENS to send
+            var amount = web3js.utils.toHex(1);
 
-        //creating raw tranaction
-        var rawTransaction = createRawTransaction(transactionCount);
-        rawTransaction["data"] = contract.methods.mintToken(toAddress, amount).encodeABI();
-        var transaction = new Tx(rawTransaction);
-        transaction.sign(privateKey);
+            //creating raw tranaction
+            var rawTransaction = createRawTransaction(transactionCount, blockResult.gasLimit, gasPrice);
+            rawTransaction["data"] = contract.methods.mintToken(toAddress, amount).encodeABI();
+            var transaction = new Tx(rawTransaction);
+            transaction.sign(privateKey);
 
-        //sending transacton via web3js module
-        web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
-            .on('transactionHash', (transaction) => {
-                console.log('Transaction: ' + ropstenTxURL + transaction)
+            //sending transacton via web3js module
+            web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
+                .on('transactionHash', (transaction) => {
+                    console.log('Transaction: ' + ropstenTxURL + transaction)
+                    console.log('GasLimit: ' + blockResult.gasLimit, + ' || Gas Price: ' + gasPrice)
+                });
             });
-    })
+        });
+    });
 });
+
 
 app.get('/sendmoretx', () => {
     var reporterAccount = web3js.eth.accounts.create();
@@ -87,20 +94,26 @@ app.get('/sendmoretx', () => {
     
     // get transaction count, later will used as nonce
     web3js.eth.getTransactionCount(myAddress).then(function(transactionCount){
-        var amount_reporter = web3js.utils.toHex(2);
-        var amount_voters = web3js.utils.toHex(1);
+        web3js.eth.getBlock("latest", (error, blockResult) => {
+            web3js.eth.getGasPrice((err, gasResult) => {
+                const gasPrice = gasResult * 1.40 
+                var amount_reporter = web3js.utils.toHex(2);
+                var amount_voters = web3js.utils.toHex(1);
 
-        //creating raw tranaction
-        var rawTransaction = createRawTransaction(transactionCount);
-        rawTransaction["data"] = contract.methods.drop(reporterAccount.address, addresses, amount_reporter, amount_voters).encodeABI();
-        var transaction = new Tx(rawTransaction);
-        transaction.sign(privateKey);
+                //creating raw tranaction
+                var rawTransaction = createRawTransaction(transactionCount, blockResult.gasLimit, gasPrice);
+                rawTransaction["data"] = contract.methods.drop(reporterAccount.address, addresses, amount_reporter, amount_voters).encodeABI();
+                var transaction = new Tx(rawTransaction);
+                transaction.sign(privateKey);
 
-        //sending transacton via web3js module
-        web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
-            .on('transactionHash', (transaction) => {
-                console.log('Transaction: ' + ropstenTxURL + transaction)
-            }); 
+                //sending transacton via web3js module
+                web3js.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'))
+                    .on('transactionHash', (transaction) => {
+                        console.log('Transaction: ' + ropstenTxURL + transaction)
+                        console.log('GasLimit: ' + blockResult.gasLimit, + ' || Gas Price: ' + gasPrice)
+                    }); 
+            });
+        });
     })
 });
 
